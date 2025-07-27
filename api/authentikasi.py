@@ -13,6 +13,7 @@ class ProtectedResource(Resource):
 
 @auth_ns.route('/contoh-data')
 class ContohDataResource(Resource):
+    @jwt_required()
     def get(self):
         """Contoh data yang dikirimkan api"""
         return{

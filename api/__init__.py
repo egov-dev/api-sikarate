@@ -1,7 +1,12 @@
+from datetime import timedelta
+import os
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from flask_restx import Api
+
+from .utils.blacklist_store import is_blacklisted
 
 from .authentikasi import auth_ns
 
@@ -9,6 +14,17 @@ api = Flask(__name__)
 CORS(api)
 
 load_dotenv()
+
+api.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
+api.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=12)  # waktu login sesi
+api.config['JWT_BLACKLIST_ENABLED'] = True
+api.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
+
+jwt = JWTManager(api)
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    return is_blacklisted(jwt_payload['jti'])
 
 authorizations = {
     'Bearer Auth': {
