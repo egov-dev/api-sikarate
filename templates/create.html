@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tambah Mahasiswa</title>
+</head>
+<body>
+    <h1>Tambah Mahasiswa</h1>
+    <form method="POST">
+        <input type="text" name="nama" placeholder="Nama Mahasiswa" required>
+        <button type="submit">Simpan</button>
+    </form>
+    <a href="{{ url_for('index') }}">Kembali</a>
+</body>
+</html>
