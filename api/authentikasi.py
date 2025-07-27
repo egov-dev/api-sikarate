@@ -9,3 +9,14 @@ class ProtectedResource(Resource):
     def get(self):
         """Akses: (admin/mentor/peserta), Cek token masih valid"""
         return {'status': 'Token masih valid'}, 200
+    
+
+@auth_ns.route('/contoh-data')
+class ContohDataResource(Resource):
+    def get(self):
+        """Contoh data yang dikirimkan api"""
+        return{
+            'id_laporan': 1,
+            'nama_pelapor': 'user1',
+            'lokasi_kebakaran': 'mataram'
+        }
