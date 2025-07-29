@@ -9,6 +9,10 @@ from flask_restx import Api
 from .utils.blacklist_store import is_blacklisted
 
 from .authentikasi import auth_ns
+from .blog import blog_ns
+from .laporan import laporan_ns
+from .kategori import kategori_ns
+from .user import user_ns 
 
 api = Flask(__name__)
 CORS(api)
@@ -47,3 +51,7 @@ restx_api = Api(
 )
 
 restx_api.add_namespace(auth_ns, path="/auth")
+restx_api.add_namespace(blog_ns, path="/blog")
+restx_api.add_namespace(laporan_ns, path="/laporan")
+restx_api.add_namespace(kategori_ns, path="/kategori")
+restx_api.add_namespace(user_ns, path="/user")
