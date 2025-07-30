@@ -26,8 +26,8 @@ def insert_user(data):
     with engine.begin() as conn:
         try:
             result = conn.execute(text("""
-                INSERT INTO users (email, password, nama, status)
-                VALUES (:email, :password, :nama, :1)
+                INSERT INTO users (email, password, nama, role, status)
+                VALUES (:email, :password, :nama, :role, 1)
                 RETURNING id_user
             """), data)
             return result.fetchone()[0]
