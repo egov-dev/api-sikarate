@@ -79,7 +79,8 @@ def hapus_kategori(id_kategori):
     with engine.begin() as conn:
         try:
             query = text("""
-                DELETE FROM kategori
+                 UPDATE kategori
+                    SET status = 0
                 WHERE id_kategori = :id
             """)
             result = conn.execute(query, {"id": id_kategori})

@@ -15,7 +15,6 @@ user_model = user_ns.model('User', {
     'email': fields.String(required=True),
     'password': fields.String(required=True),
     'nama': fields.String(required=True),
-    'status': fields.Integer(required=True)
 })
 
 @user_ns.route('/')

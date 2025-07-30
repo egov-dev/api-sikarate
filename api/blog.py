@@ -15,8 +15,7 @@ blog_ns = Namespace('blog', description='Manajemen Artikel')
 artikel_input_model = blog_ns.model('ArtikelInput', {
     'id_kategori': fields.Integer(required=True),
     'judul': fields.String(required=True),
-    'isi': fields.String(required=True),
-    'status': fields.Integer(required=True)
+    'isi': fields.String(required=True)
 })
 
 artikel_update_model = blog_ns.model('ArtikelUpdate', {

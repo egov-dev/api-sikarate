@@ -17,7 +17,6 @@ kategori_input_model = kategori_ns.model('KategoriInput', {
 kategori_model = kategori_ns.model('Kategori', {
     'id_kategori': fields.Integer(readOnly=True),
     'nama': fields.String,
-    'status': fields.Integer,
     'created_at': fields.String,
     'updated_at': fields.String
 })

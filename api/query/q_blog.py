@@ -81,7 +81,7 @@ def update_artikel(id_artikel, data):
                     SET judul = :judul,
                         isi = :isi,
                         id_kategori = :id_kategori,
-                        status = :status,
+                        status = 1,
                         updated_at = NOW()
                     WHERE id_artikel = :id
                 """)
@@ -90,7 +90,6 @@ def update_artikel(id_artikel, data):
                     "judul": data['judul'],
                     "isi": data['isi'],
                     "id_kategori": data['id_kategori'],
-                    "status": data['status']
                 }
             else:
                 query = text("""
@@ -120,11 +119,12 @@ def hapus_artikel(id_artikel):
     with engine.begin() as conn:
         try:
             query = text("""
-                DELETE FROM artikel
+                 UPDATE artikel
+                    SET status = 0
                 WHERE id_artikel = :id
             """)
             result = conn.execute(query, {"id": id_artikel})
-            return result.rowcount > 0  # True kalau ada yg kehapus
+            return result.rowcount > 0  
         except SQLAlchemyError as e:
             print("DB Error:", e)
             return False
