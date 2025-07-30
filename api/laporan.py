@@ -2,13 +2,16 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import SQLAlchemyError
+from .utils.decorator import role_required
 from .query.q_laporan import (
     tambah_laporan, get_all_laporan, get_laporan_by_id,
     update_laporan, hapus_laporan, verifikasi_laporan
 )
 
+# Namespace
 laporan_ns = Namespace('laporan', description='Manajemen Laporan')
 
+# Input models
 laporan_input_model = laporan_ns.model('LaporanInput', {
     'judul': fields.String(required=True),
     'lokasi': fields.String(required=True),
@@ -16,7 +19,6 @@ laporan_input_model = laporan_ns.model('LaporanInput', {
     'jenis': fields.String(required=True),
     'deskripsi': fields.String,
     'lampiran': fields.String,
-    # 'status_penanganan': fields.String,
 })
 
 laporan_update_model = laporan_ns.model('LaporanUpdate', {
@@ -26,11 +28,11 @@ laporan_update_model = laporan_ns.model('LaporanUpdate', {
     'jenis': fields.String(required=True),
     'deskripsi': fields.String,
     'lampiran': fields.String,
-    # 'status_penanganan': fields.String,
 })
 
 laporan_verifikasi_model = laporan_ns.model('LaporanVerifikasi', {
-    'status_penanganan': fields.String,})
+    'status_penanganan': fields.String,
+})
 
 
 @laporan_ns.route('/')
@@ -43,15 +45,14 @@ class LaporanListResource(Resource):
             if not data:
                 return {
                     'status': 'empty',
-                    'message': 'Tidak ada artikel yang tersedia'
+                    'message': 'Tidak ada laporan yang tersedia'
                 }, 404
             return {'data': data}, 200
         except SQLAlchemyError as e:
             return {
                 'status': 'error',
-                'message': f'Gagal mengambil data artikel: {str(e)}'
+                'message': f'Gagal mengambil data laporan: {str(e)}'
             }, 500
-
 
     @jwt_required()
     @laporan_ns.expect(laporan_input_model)
@@ -64,10 +65,14 @@ class LaporanListResource(Resource):
         for field in required_fields:
             if field not in payload:
                 return {'message': f'Field {field} tidak ada di body'}, 400
+
         try:
             new_id = tambah_laporan(user_id, payload)
             if new_id:
-                return {"message": "Laporan berhasil ditambahkan", "id_laporan": new_id}, 201
+                return {
+                    "message": "Laporan berhasil ditambahkan",
+                    "id_laporan": new_id
+                }, 201
             return {"message": "Gagal tambah laporan"}, 500
         except SQLAlchemyError as e:
             return {'status': 'error', 'message': str(e)}, 500
@@ -90,13 +95,22 @@ class LaporanResource(Resource):
         """Update laporan berdasarkan ID"""
         payload = request.get_json()
         try:
-            success = update_laporan(id_laporan, payload)
+            success = update_laporan(
+                id_laporan,
+                {
+                    'judul': payload['judul'],
+                    'lokasi': payload['lokasi'],
+                    'waktu_kejadian': payload['waktu_kejadian'],
+                    'jenis': payload['jenis'],
+                    'deskripsi': payload.get('deskripsi'),
+                    'lampiran': payload.get('lampiran')
+                }
+            )
             if success:
-                return {"message": "Laporan berhasil diperbarui"}, 200
-            return {"message": "Gagal update laporan"}, 500
+                return {'message': 'Laporan berhasil diperbarui'}, 200
+            return {'message': 'Gagal memperbarui laporan'}, 500
         except SQLAlchemyError as e:
             return {'status': 'error', 'message': str(e)}, 500
-
 
     @jwt_required()
     def delete(self, id_laporan):
@@ -104,14 +118,20 @@ class LaporanResource(Resource):
         try:
             success = hapus_laporan(id_laporan)
             if success:
-                return {'message': f'laporan dengan ID {id_laporan} berhasil dihapus'}, 200
+                return {
+                    'message': f'Laporan dengan ID {id_laporan} berhasil dihapus'
+                }, 200
             else:
-                return {'message': f'laporan dengan ID {id_laporan} tidak ditemukan'}, 404
+                return {
+                    'message': f'Laporan dengan ID {id_laporan} tidak ditemukan'
+                }, 404
         except SQLAlchemyError as e:
             return {'status': 'error', 'message': str(e)}, 500
 
 
-    @jwt_required()
+@laporan_ns.route('/<int:id_laporan>/verifikasi')
+class LaporanVerifikasiResource(Resource):
+    @role_required('admin')
     @laporan_ns.expect(laporan_verifikasi_model)
     def put(self, id_laporan):
         """Verifikasi laporan berdasarkan ID"""
@@ -119,9 +139,13 @@ class LaporanResource(Resource):
         try:
             success = verifikasi_laporan(id_laporan, payload)
             if success is None:
-                return {"message": "Laporan dengan ID tersebut tidak ditemukan"}, 404
+                return {
+                    "message": "Laporan dengan ID tersebut tidak ditemukan"
+                }, 404
             if success:
-                return {"message": "Verifikasi laporan berhasil diperbarui"}, 200
-            return {"message": "Gagal Verifikasi laporan"}, 500
+                return {
+                    "message": "Verifikasi laporan berhasil diperbarui"
+                }, 200
+            return {"message": "Gagal verifikasi laporan"}, 500
         except SQLAlchemyError as e:
             return {'status': 'error', 'message': str(e)}, 500

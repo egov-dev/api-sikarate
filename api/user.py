@@ -2,6 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import SQLAlchemyError
+from .utils.decorator import role_required
 
 from .query.q_user import (
     get_all_users, get_user_by_id,
@@ -19,7 +20,7 @@ user_model = user_ns.model('User', {
 
 @user_ns.route('/')
 class UserListResource(Resource):
-    @jwt_required()
+    @role_required('admin')
     def get(self):
         """Ambil semua data user"""
         try:
@@ -37,7 +38,7 @@ class UserListResource(Resource):
             }, 500
 
 
-    @jwt_required()
+    @role_required('admin')
     @user_ns.expect(user_model)
     def post(self):
         """Tambah user baru"""
@@ -51,7 +52,7 @@ class UserListResource(Resource):
 
 @user_ns.route('/<int:id_user>')
 class UserResource(Resource):
-    @jwt_required()
+    @role_required('admin')
     def get(self, id_user):
         """Ambil user berdasarkan ID"""
         user = get_user_by_id(id_user)
@@ -60,7 +61,7 @@ class UserResource(Resource):
         return {'data': user}, 200
 
 
-    @jwt_required()
+    @role_required('admin')
     @user_ns.expect(user_model)
     def put(self, id_user):
         """Perbarui data user berdasarkan ID"""
@@ -75,7 +76,7 @@ class UserResource(Resource):
             return {'status': 'error', 'message': str(e)}, 500
 
 
-    @jwt_required()
+    @role_required('admin')
     def delete(self, id_user):
         """Hapus user berdasarkan ID"""
         try:

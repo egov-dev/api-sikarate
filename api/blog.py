@@ -2,6 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import SQLAlchemyError
+from .utils.decorator import role_required
 
 from .query.q_blog import (
     get_all_artikel, get_artikel_by_id,
@@ -27,7 +28,6 @@ artikel_update_model = blog_ns.model('ArtikelUpdate', {
 
 @blog_ns.route('/')
 class ArtikelListResource(Resource):
-    @jwt_required()
     def get(self):
         """Ambil semua artikel"""
         try:
@@ -46,7 +46,7 @@ class ArtikelListResource(Resource):
         
 
 
-    @jwt_required()
+    @role_required('admin')
     @blog_ns.expect(artikel_input_model) 
     def post(self):
         """Buat artikel baru"""
@@ -76,7 +76,6 @@ class ArtikelListResource(Resource):
 
 @blog_ns.route('/<int:id_artikel>')
 class ArtikelResource(Resource):
-    @jwt_required()
     def get(self, id_artikel):
         """Ambil artikel berdasarkan ID"""
         artikel = get_artikel_by_id(id_artikel)
@@ -85,7 +84,7 @@ class ArtikelResource(Resource):
         return {'data': artikel}, 200
 
 
-    @jwt_required()
+    @role_required('admin')
     @blog_ns.expect(artikel_update_model)
     def put(self, id_artikel):
         """Update artikel berdasarkan ID"""
@@ -105,7 +104,7 @@ class ArtikelResource(Resource):
 
 
 
-    @jwt_required()
+    @role_required('admin')
     def delete(self, id_artikel):
         """Hapus artikel berdasarkan ID"""
         try:
