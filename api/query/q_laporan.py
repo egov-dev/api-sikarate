@@ -9,8 +9,8 @@ def tambah_laporan(user_id, data):
     with engine.begin() as conn:
         try:
             result = conn.execute(text("""
-                INSERT INTO laporan (id_user, judul, lokasi, waktu_kejadian, jenis, deskripsi, lampiran, status)
-                VALUES (:id_user, :judul, :lokasi, :waktu_kejadian, :jenis, :deskripsi, :lampiran, 1)
+                INSERT INTO laporan (id_user, judul, lokasi, waktu_kejadian, jenis, deskripsi, status)
+                VALUES (:id_user, :judul, :lokasi, :waktu_kejadian, :jenis, :deskripsi, 1)
                 RETURNING id_laporan
             """), {
                 "id_user": user_id,
@@ -19,8 +19,6 @@ def tambah_laporan(user_id, data):
                 "waktu_kejadian": data['waktu_kejadian'],
                 "jenis": data['jenis'],
                 "deskripsi": data.get('deskripsi', ''),
-                "lampiran": data.get('lampiran', ''),
-                # "status_penanganan": data.get('status_penanganan', '')
             })
             return result.fetchone()[0]
         except SQLAlchemyError as e:
@@ -78,8 +76,6 @@ def update_laporan(id_laporan, data):
                     waktu_kejadian = :waktu_kejadian,
                     jenis = :jenis,
                     deskripsi = :deskripsi,
-                    lampiran = :lampiran,
-                    # status_penanganan = :status_penanganan
                 WHERE id_laporan = :id AND status = 1
             """), {
                 "id": id_laporan,
@@ -88,8 +84,6 @@ def update_laporan(id_laporan, data):
                 "waktu_kejadian": data['waktu_kejadian'],
                 "jenis": data['jenis'],
                 "deskripsi": data.get('deskripsi', ''),
-                "lampiran": data.get('lampiran', ''),
-                # "status_penanganan": data.get('status_penanganan', '')
             })
             return True
         except SQLAlchemyError as e:

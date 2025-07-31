@@ -55,7 +55,7 @@ class ArtikelListResource(Resource):
         payload = request.get_json()
         print("Payload:", payload)
 
-        required_fields = ['id_kategori', 'judul', 'isi', 'status']
+        required_fields = ['id_kategori', 'judul', 'isi']
         for field in required_fields:
             if field not in payload:
                 return {'message': f'Field {field} tidak ada di body'}, 400
@@ -65,8 +65,7 @@ class ArtikelListResource(Resource):
     {
         'id_kategori': payload['id_kategori'],
         'judul': payload['judul'],
-        'isi': payload['isi'],     
-        'status': payload['status']
+        'isi': payload['isi']  
     })
             return {'message': 'Artikel berhasil dibuat'}, 201
         except SQLAlchemyError as e:

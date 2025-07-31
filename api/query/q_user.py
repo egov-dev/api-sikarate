@@ -44,7 +44,7 @@ def update_user(id_user, data):
                 SET email = :email,
                     password = :password,
                     nama = :nama,
-                    status = :1
+                    status = 1
                 WHERE id_user = :id_user
             """), {**data, "id_user": id_user})
             return True

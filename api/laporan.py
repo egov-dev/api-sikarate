@@ -18,7 +18,6 @@ laporan_input_model = laporan_ns.model('LaporanInput', {
     'waktu_kejadian': fields.String(required=True),
     'jenis': fields.String(required=True),
     'deskripsi': fields.String,
-    'lampiran': fields.String,
 })
 
 laporan_update_model = laporan_ns.model('LaporanUpdate', {
@@ -27,7 +26,6 @@ laporan_update_model = laporan_ns.model('LaporanUpdate', {
     'waktu_kejadian': fields.String(required=True),
     'jenis': fields.String(required=True),
     'deskripsi': fields.String,
-    'lampiran': fields.String,
 })
 
 laporan_verifikasi_model = laporan_ns.model('LaporanVerifikasi', {
@@ -103,7 +101,6 @@ class LaporanResource(Resource):
                     'waktu_kejadian': payload['waktu_kejadian'],
                     'jenis': payload['jenis'],
                     'deskripsi': payload.get('deskripsi'),
-                    'lampiran': payload.get('lampiran')
                 }
             )
             if success:
