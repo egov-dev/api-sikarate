@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from .utils.decorator import role_required
 from .query.q_laporan import (
     tambah_laporan, get_all_laporan, get_laporan_by_id,
-    update_laporan, hapus_laporan, verifikasi_laporan
+    update_laporan, hapus_laporan, verifikasi_laporan, get_laporan_by_user_id
 )
 
 # Namespace
@@ -86,7 +86,7 @@ class LaporanResource(Resource):
             return {'message': 'Laporan tidak ditemukan'}, 404
         return {'data': laporan}, 200
 
-
+    
     @jwt_required()
     @laporan_ns.expect(laporan_update_model)
     def put(self, id_laporan):
@@ -131,7 +131,7 @@ class LaporanVerifikasiResource(Resource):
     @role_required('admin')
     @laporan_ns.expect(laporan_verifikasi_model)
     def put(self, id_laporan):
-        """Verifikasi laporan berdasarkan ID"""
+        """Verifikasi laporan berdasarkan ID saat ini"""
         payload = request.get_json()
         try:
             success = verifikasi_laporan(id_laporan, payload)
@@ -146,3 +146,23 @@ class LaporanVerifikasiResource(Resource):
             return {"message": "Gagal verifikasi laporan"}, 500
         except SQLAlchemyError as e:
             return {'status': 'error', 'message': str(e)}, 500
+
+@laporan_ns.route('/user')
+class LaporanByUserResource(Resource):
+    @jwt_required()
+    def get(self):
+        """Ambil semua laporan berdasarkan ID User """
+        user_id = get_jwt_identity()
+        try:
+            data = get_laporan_by_user_id(user_id)
+            if not data:
+                return {
+                    'status': 'empty',
+                    'message': 'Tidak ada laporan untuk user ini'
+                }, 404
+            return {'data': data}, 200
+        except SQLAlchemyError as e:
+            return {
+                'status': 'error',
+                'message': f'Gagal mengambil data laporan: {str(e)}'
+            }, 500

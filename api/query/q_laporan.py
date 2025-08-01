@@ -40,6 +40,27 @@ def get_all_laporan():
             laporan_list.append(laporan)
         return laporan_list
 
+def get_laporan_by_user_id(user_id):
+    engine = get_connection()
+    with engine.begin() as conn:
+        try:
+            result = conn.execute(text("""
+                SELECT * FROM laporan
+                WHERE id_user = :user_id AND status = 1
+            """), {"user_id": user_id}).mappings().all()
+
+            laporan_list = []
+            for row in result:
+                laporan = dict(row)
+                for key, value in laporan.items():
+                    if isinstance(value, datetime):
+                        laporan[key] = value.isoformat()
+                laporan_list.append(laporan)
+            return laporan_list
+        except SQLAlchemyError as e:
+            print("DB Error:", e)
+            return []
+
 
 def get_laporan_by_id(id_laporan):
     engine = get_connection()
