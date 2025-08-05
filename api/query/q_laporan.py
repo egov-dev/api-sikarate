@@ -10,7 +10,7 @@ def tambah_laporan(user_id, data):
         try:
             result = conn.execute(text("""
                 INSERT INTO laporan (id_user, judul, lokasi, waktu_kejadian, jenis, deskripsi, nama, status)
-                VALUES (:id_user, :judul, :lokasi, :waktu_kejadian, :jenis,:deskripsi, :nama, 1)
+                VALUES (:id_user, :judul, :lokasi, :waktu_kejadian, :jenis, :deskripsi, :nama, 1)
                 RETURNING id_laporan
             """), {
                 "id_user": user_id,
@@ -97,8 +97,8 @@ def update_laporan(id_laporan, data):
                     lokasi = :lokasi,
                     waktu_kejadian = :waktu_kejadian,
                     jenis = :jenis,
-                    deskripsi = :deskripsi,
-                    nama = :nama
+                    nama = :nama,
+                    deskripsi = :deskripsi
                 WHERE id_laporan = :id AND status = 1
             """), {
                 "id": id_laporan,
@@ -106,8 +106,8 @@ def update_laporan(id_laporan, data):
                 "lokasi": data['lokasi'],
                 "waktu_kejadian": data['waktu_kejadian'],
                 "jenis": data['jenis'],
-                "deskripsi": data.get('deskripsi', ''),
-                "nama": data['nama']
+                "nama": data['nama'],
+                "deskripsi": data.get('deskripsi', '')
             })
             return True
         except SQLAlchemyError as e:

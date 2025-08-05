@@ -19,6 +19,7 @@ laporan_input_model = laporan_ns.model('LaporanInput', {
     'jenis': fields.String(required=True),
     'deskripsi': fields.String,
     'nama': fields.String(required=True)
+    
 })
 
 laporan_update_model = laporan_ns.model('LaporanUpdate', {
