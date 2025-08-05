@@ -18,6 +18,7 @@ laporan_input_model = laporan_ns.model('LaporanInput', {
     'waktu_kejadian': fields.String(required=True),
     'jenis': fields.String(required=True),
     'deskripsi': fields.String,
+    'nama': fields.String(required=True)
 })
 
 laporan_update_model = laporan_ns.model('LaporanUpdate', {
@@ -26,6 +27,7 @@ laporan_update_model = laporan_ns.model('LaporanUpdate', {
     'waktu_kejadian': fields.String(required=True),
     'jenis': fields.String(required=True),
     'deskripsi': fields.String,
+    'nama': fields.String(required=True)
 })
 
 laporan_verifikasi_model = laporan_ns.model('LaporanVerifikasi', {
@@ -59,7 +61,7 @@ class LaporanListResource(Resource):
         user_id = get_jwt_identity()
         payload = request.get_json()
 
-        required_fields = ['judul', 'lokasi', 'waktu_kejadian', 'jenis']
+        required_fields = ['judul', 'lokasi', 'waktu_kejadian', 'jenis', 'nama']
         for field in required_fields:
             if field not in payload:
                 return {'message': f'Field {field} tidak ada di body'}, 400
@@ -101,6 +103,7 @@ class LaporanResource(Resource):
                     'waktu_kejadian': payload['waktu_kejadian'],
                     'jenis': payload['jenis'],
                     'deskripsi': payload.get('deskripsi'),
+                    'nama': payload['nama']
                 }
             )
             if success:
