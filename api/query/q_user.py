@@ -6,7 +6,7 @@ def get_all_users():
     engine = get_connection()
     with engine.connect() as conn:
         result = conn.execute(text("""
-            SELECT id_user, email, nama, status = 1
+            SELECT id_user, email, nama, role, status = 1
             FROM users
         """)).mappings().all()
         return [dict(row) for row in result]
@@ -15,7 +15,7 @@ def get_user_by_id(id_user):
     engine = get_connection()
     with engine.connect() as conn:
         result = conn.execute(text("""
-            SELECT id_user, email, nama, status = 1
+            SELECT id_user, email, nama, role, status = 1
             FROM users
             WHERE id_user = :id_user
         """), {"id_user": id_user}).mappings().fetchone()
@@ -52,16 +52,17 @@ def update_user(id_user, data):
             print("DB Error:", e)
             return False
 
+        
 def hapus_user(id_user):
     engine = get_connection()
     with engine.begin() as conn:
         try:
-            result = conn.execute(text("""
-                UPDATE user
-                    SET status = 0
+            query = text("""
+                DELETE FROM users
                 WHERE id_user = :id
-            """), {"id_user": id_user})
-            return result.rowcount > 0
+            """)
+            result = conn.execute(query, {"id": id_user})
+            return result.rowcount > 0  
         except SQLAlchemyError as e:
             print("DB Error:", e)
             return False
