@@ -18,8 +18,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose port (Coolify otomatis akan baca)
-EXPOSE 8000
+EXPOSE 8100
 
 # Jalankan Flask dengan Gunicorn (lebih production ready)
 # Ganti `app:app` sesuai nama file dan object Flask kamu
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "wsgi:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8100", "wsgi:app"]
