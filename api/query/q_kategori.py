@@ -18,21 +18,47 @@ def tambah_kategori(data):
             return None
 
 
-def get_all_kategori():
-    engine = get_connection()
-    with engine.begin() as conn:
-        result = conn.execute(
-            text("SELECT * FROM kategori WHERE status = 1")
-        ).mappings().all()
+# def get_all_kategori():
+#     engine = get_connection()
+#     with engine.begin() as conn:
+#         result = conn.execute(
+#             text("SELECT * FROM kategori WHERE status = 1")
+#         ).mappings().all()
         
-        kategori_list = []
-        for row in result:
-            kategori = dict(row)
-            for key, value in kategori.items():
-                if isinstance(value, datetime):
-                    kategori[key] = value.isoformat()
-            kategori_list.append(kategori)
-        return kategori_list
+#         kategori_list = []
+#         for row in result:
+#             kategori = dict(row)
+#             for key, value in kategori.items():
+#                 if isinstance(value, datetime):
+#                     kategori[key] = value.isoformat()
+#             kategori_list.append(kategori)
+#         return kategori_list
+
+def get_all_kategori():
+    try:
+        engine = get_connection()
+        with engine.begin() as conn:
+            # Test query simple dulu
+            conn.execute(text("SELECT 1"))
+            print("✅ Database connected successfully")
+
+            # Query data kategori
+            result = conn.execute(
+                text("SELECT * FROM kategori WHERE status = 1")
+            ).mappings().all()
+
+            kategori_list = []
+            for row in result:
+                kategori = dict(row)
+                for key, value in kategori.items():
+                    if isinstance(value, datetime):
+                        kategori[key] = value.isoformat()
+                kategori_list.append(kategori)
+
+            return kategori_list
+    except SQLAlchemyError as e:
+        print(f"❌ Database connection/query failed: {str(e)}")
+        return []
 
 
 def get_kategori_by_id(id_kategori):
