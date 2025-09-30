@@ -22,4 +22,4 @@ EXPOSE 8000
 
 # Jalankan Flask dengan Gunicorn (lebih production ready)
 # Ganti `app:app` sesuai nama file dan object Flask kamu
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "wsgi:app"]

@@ -55,3 +55,5 @@ restx_api.add_namespace(blog_ns, path="/blog")
 restx_api.add_namespace(laporan_ns, path="/laporan")
 restx_api.add_namespace(kategori_ns, path="/kategori")
 restx_api.add_namespace(user_ns, path="/user")
+# Tambahkan ini supaya Gunicorn kenal variabel app
+app = api
