@@ -56,4 +56,13 @@ restx_api.add_namespace(laporan_ns, path="/laporan")
 restx_api.add_namespace(kategori_ns, path="/kategori")
 restx_api.add_namespace(user_ns, path="/user")
 # Tambahkan ini supaya Gunicorn kenal variabel app
+@api.route("/test-db")
+def test_db():
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+            return jsonify({"status": "ok", "message": "DB connected"})
+    except Exception as e:
+        api.logger.error(f"❌ Error in /test-db: {e}", exc_info=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
 app = api
