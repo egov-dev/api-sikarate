@@ -14,8 +14,8 @@ dbname = os.getenv("DB_NAME")
 username = os.getenv("DB_USER")
 password = os.getenv("DB_PASS")
 
-# DATABASE_URL = f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{dbname}'
-DATABASE_URL = f'mysql+pymysql://{username}:{password}@{host}:{port}/{dbname}'
+DATABASE_URL = f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{dbname}'
+# DATABASE_URL = f'mysql+pymysql://{username}:{password}@{host}:{port}/{dbname}'
 # ⛽️ Engine dibuat sekali dan dipakai ulang (pool aman)
 engine = create_engine(
     DATABASE_URL,
